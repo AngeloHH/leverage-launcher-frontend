@@ -39,4 +39,28 @@ async function list_accounts() {
   return accounts
 }
 
-export { get_profiles, get_profile, get_skin, list_accounts }
+async function integrity(dirname, token, url) {
+  let whitelist_url = url
+  url = appStore().go('game/files/')
+  url += `?dirname=${dirname}`
+  let data = await (await fetch(url)).json()
+  data.forEach((file, i) => data[i].path = dirname)
+  data = {files: data, token: token}
+  data = await (await fetch(whitelist_url, {
+    method: 'POST', body: JSON.stringify(data),
+    headers: {'Content-Type': 'application/json'}
+  })).json()
+}
+
+async function check_files(token) {
+  let url = appStore().go('launcher', 'options/')
+  let folders = ['mods', 'resourcepacks']
+  let data = await (await fetch(url)).json()
+  if (!data['whitelist']) return undefined
+  setInterval(() => {
+    let args = [token, data['whitelist']]
+    folders.forEach(folder => integrity(folder, ...args))
+  }, 5 * 60 * 1000)
+}
+
+export { get_profiles, get_profile, get_skin, list_accounts, check_files }

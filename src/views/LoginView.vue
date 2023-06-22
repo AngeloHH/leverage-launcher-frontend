@@ -5,7 +5,7 @@
         <h1 class="text-center font-mc-ten">Log in</h1>
         <hr>
         <mc-alert btn-bg="danger" alert-bg="secondary">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Do not share your account! Protect your privacy.
         </mc-alert>
         <label class="d-block mb-4">
           <small class="d-block text-muted">Username</small>
@@ -26,7 +26,7 @@
         </p>
       </div>
       <div class="col-8 col-lg-4 offset-2 offset-lg-4 bg-white py-2 mt-2">
-        <small>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</small>
+        <small>Avoid logging in using a premium account.</small>
       </div>
     </div>
 
@@ -93,7 +93,8 @@ export default {
       })).json()
     },
     async log_in() {
-      let form = this.form, status = true, data
+      let form = this.form, status = true, data, error
+      let title = 'An error occurred while sending the form.'
       form.type = (this.is_offline)? 'Offline' : 'Authenticated'
       if (!this.is_offline) {
         try {
@@ -102,14 +103,10 @@ export default {
           form.token = token; form.uuid = uuid
           form.type = (type)? type : form.type
         }
-        catch (error) { status = false }
+        catch (err) { status = false; error = err }
       }
-      if (!status) return appStore().notify(error.title, error.text)
+      if (!status) return appStore().notify(title, error)
       form.uuid = (await this.save_player())['uuid']
-      let error = {
-        title: 'External error',
-        text: 'An error occurred while sending the form.'
-      }
       appStore().accounts[form.uuid] = form
       this.$router.push('/')
     },

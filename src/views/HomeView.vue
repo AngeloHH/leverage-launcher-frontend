@@ -3,7 +3,7 @@ import FileManager from "@/components/FileManager.vue"
 import ProfileList from "@/components/ProfileList.vue"
 import NewProfile from "@/components/NewProfile.vue"
 import AccountList from "@/components/AccountList.vue"
-import { list_accounts } from "@/utils"
+import {check_files, list_accounts} from "@/utils"
 import { appStore } from "@/stores/counter"
 
 export default {
@@ -29,6 +29,7 @@ export default {
       }}
       let url = appStore().go('game', 'play/')
       this.pid = await (await fetch(url, data)).json()
+      if (account.token) await check_files()
     },
     async check_accounts() {
       let accounts = (await list_accounts()).length

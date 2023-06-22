@@ -6,7 +6,7 @@ export const appStore = defineStore('store', () => {
   const doubleCount = computed(() => count.value * 2)
   let url = (process.env.NODE_ENV.includes('dev'))? 'http://localhost:3000/' : '/'
   let go = (...params) => url + params.join('/')
-  let notify = (title, message) => fetch(url + `game/notification/?title=${title}&text=${message}`)
+  let notify = async (title, message) => fetch(url + `game/notification/?title=${title}&text=${message}`)
   let accounts = {}
   return { count, doubleCount, url, go, accounts, notify }
 })
